@@ -197,14 +197,14 @@ app.get('/result',async function(req,res){
     if(state == 3){
         // res.send("Results")
         // change win as y
-        let win = 3
-        if  (win == 1){
+        let y = 3
+        if  (y == 1){
             res.sendFile(__dirname+'/src/winner-DMK.html')
         }
-        else if  (win == 2){
+        else if  (y == 2){
             res.sendFile(__dirname+'/src/winner-ADMK.html')
         }
-        else if  (win == 3){
+        else if  (y == 3){
             res.sendFile(__dirname+'/src/winner-BJP.html')
         }    
     }

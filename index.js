@@ -44,21 +44,72 @@ app.post('/chanst',function(req,res){
 //vote now 
 app.get('/vote',function(req,res){
     // res.send("e VOTING System !!")
-    res.sendFile(__dirname+'/src/vote.html')
+    let state = 1 
+    if(state == 2){
+        res.sendFile(__dirname+'/src/vote.html')
+    }
+    else {
+        // res.send("Error state")
+        res.sendFile(__dirname+'/src/wrongState.html')
+    }
 })
 app.post('/vote',function(req,res){
-    let addr = req.body.address
-    let vote = req.body.candidate
-    console.log("Voted :"+ addr)
-    res.send("Vote polled Success Fully")
+    if(state == 2){
+        let addr = req.body.address
+        let vote = req.body.candidate
+        console.log("Voted :"+ addr)
+        res.sendFile(__dirname+'/src/votesu.html')
+
+    }
+    else {
+        // res.send("Error state")
+        res.sendFile(__dirname+'/src/wrongState.html')
+    }
 })
 
 //register 
 app.get('/register',function(req,res){
-    res.sendFile(__dirname+'/src/register.html')
+    let state = 1 
+    if(state == 1){
+        res.sendFile(__dirname+'/src/register.html')
+    }
+    else {
+        // res.send("Error state")
+        res.sendFile(__dirname+'/src/wrongState.html')
+    }
+
 })
 app.post('/register',function(req,res){
+    let state = 1 
+    if(state == 1){
     let addr = req.body.address
-    console.log(addr + "registed")
-    res.send("registed successfully")
+    console.log(addr + " registed")
+    // res.send("registed successfully")
+    res.sendFile(__dirname+'/src/registersu.html')
+    }
+    else {
+        // res.send("Error state")
+        res.sendFile(__dirname+'/src/wrongState.html')
+    }
+})
+
+//result
+app.get('/result',function(req,res){
+    let state = 3
+    if(state == 3){
+        // res.send("Results")
+        let win = 3
+        if  (win == 1){
+            res.sendFile(__dirname+'/src/winner-DMK.html')
+        }
+        else if  (win == 2){
+            res.sendFile(__dirname+'/src/winner-ADMK.html')
+        }
+        else if  (win == 3){
+            res.sendFile(__dirname+'/src/winner-BJP.html')
+        }    
+    }
+    else {
+        res.sendFile(__dirname+'/src/wrongState.html')
+    }
 })

@@ -146,7 +146,16 @@ app.post('/vote',function(req,res){
         let vote = Number(req.body.candidate)
         console.log("Voted :"+ addr)
         res.sendFile(__dirname+'/src/votesu.html')
-        vote(addr,vote)
+        if (vote == "ADMK"){
+            v = 0
+          }
+          else if(vote == "DMK"){
+            v = 1
+          }
+          else {
+            v = 3
+          }
+        vote(addr,v)
     }
     else {
         // res.send("Error state")
@@ -187,6 +196,7 @@ app.get('/result',async function(req,res){
     // let state = 3
     if(state == 3){
         // res.send("Results")
+        // change win as y
         let win = 3
         if  (win == 1){
             res.sendFile(__dirname+'/src/winner-DMK.html')

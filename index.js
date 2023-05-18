@@ -5,42 +5,47 @@ app=express()
 app.use(bodyparser.urlencoded({ extended: false }))
 app.use('', express.static('public'))
 app.listen(8000)
+let state;
 
-
-const ABI=[{'inputs': [], 'stateMutability': 'nonpayable', 'type': 'constructor'},
-{'inputs': [{'internalType': 'uint256', 'name': 'k', 'type': 'uint256'}],
- 'name': 'change_state',
- 'outputs': [],
- 'stateMutability': 'nonpayable',
- 'type': 'function'},
+const ABI=[{'inputs': [{'internalType': 'uint256', 'name': 'k', 'type': 'uint256'}],
+'name': 'change_state',
+'outputs': [],
+'stateMutability': 'nonpayable',
+'type': 'function'},
+{'inputs': [],
+'name': 'reg_chairperson',
+'outputs': [],
+'stateMutability': 'nonpayable',
+'type': 'function'},
 {'inputs': [{'internalType': 'address', 'name': 'vt', 'type': 'address'}],
- 'name': 'register',
- 'outputs': [],
- 'stateMutability': 'nonpayable',
- 'type': 'function'},
+'name': 'register',
+'outputs': [],
+'stateMutability': 'nonpayable',
+'type': 'function'},
 {'inputs': [{'internalType': 'address', 'name': 'r', 'type': 'address'}],
- 'name': 'regvoter',
- 'outputs': [{'internalType': 'bool', 'name': '', 'type': 'bool'}],
- 'stateMutability': 'view',
- 'type': 'function'},
+'name': 'regvoter',
+'outputs': [{'internalType': 'bool', 'name': '', 'type': 'bool'}],
+'stateMutability': 'view',
+'type': 'function'},
 {'inputs': [],
- 'name': 'stage',
- 'outputs': [{'internalType': 'enum ballot.Stage',
-   'name': '',
-   'type': 'uint8'}],
- 'stateMutability': 'view',
- 'type': 'function'},
+'name': 'stage',
+'outputs': [{'internalType': 'enum ballot.Stage',
+  'name': '',
+  'type': 'uint8'}],
+'stateMutability': 'view',
+'type': 'function'},
 {'inputs': [{'internalType': 'uint8', 'name': 'i', 'type': 'uint8'}],
- 'name': 'vote',
- 'outputs': [],
- 'stateMutability': 'nonpayable',
- 'type': 'function'},
+'name': 'vote',
+'outputs': [],
+'stateMutability': 'nonpayable',
+'type': 'function'},
 {'inputs': [],
- 'name': 'winningProposal',
- 'outputs': [{'internalType': 'uint8', 'name': '', 'type': 'uint8'}],
- 'stateMutability': 'view',
- 'type': 'function'}]
-const contractAddress='0x52A4cA4e4909EA800BBB344C0681c1dE50025561'
+'name': 'winningProposal',
+'outputs': [{'internalType': 'uint8', 'name': '', 'type': 'uint8'}],
+'stateMutability': 'view',
+'type': 'function'}]
+
+const contractAddress='0x8fE6CfB0975DE25F325FaDFA7a67DA6525D6Cc2F'
 
 async function connect()
 {
@@ -53,6 +58,13 @@ async function create_instance()
 {
     con_instance=new w3.eth.Contract(ABI,contractAddress)
 }
+
+async function reg_cp(addr)
+{
+    con_instance.methods.reg_chairperson().send({from:'0x1AC2e95095F2f891060F56fd92E161B0eDf68476'})
+}
+
+
 
 async function reg_voter(addr)
 {
@@ -75,6 +87,7 @@ async function chang_state(s)
 
 connect();
 create_instance();
+reg_cp();
 
 // app.use('', express.static('public'))
 
@@ -108,16 +121,17 @@ app.post('/login',function(req,res){
 
 //change state 
 app.post('/chanst',function(req,res){
-    let state = Number(req.body.chans)
-    chang_state(state)
+    let s = Number(req.body.chans)
+    chang_state(s)
+    state=s
     console.log("the State now is : " + state)
     res.sendFile(__dirname+'/src/login.html')
 })
 
 //vote now 
 app.get('/vote',function(req,res){
+    console.log("****")
     // res.send("e VOTING System !!")
-    let state = 1 
     if(state == 2){
         res.sendFile(__dirname+'/src/vote.html')
     }
@@ -132,7 +146,7 @@ app.post('/vote',function(req,res){
         let vote = Number(req.body.candidate)
         console.log("Voted :"+ addr)
         res.sendFile(__dirname+'/src/votesu.html')
-        vote_to(addr,vote)
+        vote(addr,vote)
     }
     else {
         // res.send("Error state")
@@ -142,7 +156,7 @@ app.post('/vote',function(req,res){
 
 //register 
 app.get('/register',function(req,res){
-    let state = 1 
+    // let state = 1 
     if(state == 1){
         res.sendFile(__dirname+'/src/register.html')
     }
@@ -153,7 +167,7 @@ app.get('/register',function(req,res){
 
 })
 app.post('/register',function(req,res){
-    let state = 1 
+    // let state = 1 
     if(state == 1){
     let addr = req.body.address
     console.log(addr + " registed")
@@ -170,8 +184,7 @@ app.post('/register',function(req,res){
 //result
 app.get('/result',async function(req,res){
     let y=await con_instance.methods.winningProposal().call()
-    let state = 3
-    state=y
+    // let state = 3
     if(state == 3){
         // res.send("Results")
         let win = 3
